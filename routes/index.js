@@ -16,6 +16,7 @@ router.route("/manufactures")
 router.route("/manufactures/:manufactureId")
     .get(manufactureController.getOne)
     .put(manufactureController.updateOne)
+    .patch(manufactureController.updatePartial)
     .delete(manufactureController.deleteOne);
 
 router.route("/manufactures/:manufactureId/motorbikes")

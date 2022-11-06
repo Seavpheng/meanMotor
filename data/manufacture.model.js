@@ -20,11 +20,7 @@ const manufactureSchema = new mongoose.Schema({
     establishedYear : {
         type : Number,
         min : 1900
-    },
-    // motorbikes : {
-    //     type: motorbikeSchema,
-    //     default: () => ({})
-    //   }
+    }, 
 
     motorbikes : [motorbikeSchema]
 });

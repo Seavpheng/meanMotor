@@ -4,8 +4,7 @@ require("./data/db");
 const path = require("path");
 const express = require("express");
 const app = express(); 
-const bodyParser = require('body-parser')
-
+const bodyParser = require('body-parser') 
 const routes = require("./routes");
 
 app.use('/',function (req, res, next){

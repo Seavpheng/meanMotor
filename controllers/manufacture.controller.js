@@ -4,8 +4,7 @@ const Manufacture = mongoose.model(process.env.MANUFACTURE_MODEL);
 function createManufacture(body){
     manufacture = {
         name : body.name,
-        establishedYear : body.establishedYear,
-        //motorbikes : [{model_name : "Dream", year: 2000, horsePower: "200CC"}]
+        establishedYear : body.establishedYear, 
         motorbikes : []
     }; 
     return manufacture;
@@ -13,6 +12,11 @@ function createManufacture(body){
 
 const getOne = function (req, res){
     const manufactureId = req.params.manufactureId;
+ 
+    if(!mongoose.isValidObjectId(manufactureId)){
+        res.status(process.env.RESPONSE_CODE_INCORRECT_FORMAT).json(process.env.RESPONSE_MESSAGE_INCORRECT_INPUT); 
+        return 
+    }
 
     Manufacture.findById(manufactureId).exec(function(err, manufacture){
         const response ={status : process.env.RESPONSE_CODE_OK, message: [manufacture]};
@@ -40,15 +44,13 @@ const getAll = function(req, res){
 
     if(isNaN(offset) || isNaN(count)){
         res.status(process.env.RESPONSE_CODE_INCORRECT_FORMAT).json(process.env.RESPONSE_MESSAGE_NUMBER);
-        return ;
+        return;
     }
 
     if(count > maxCount){
-        response.status = process.env.RESPONSE_CODE_INCORRECT_FORMAT;
-        response.message = RESPONSE_MESSAGE_EXCEED_LIMIT + count;
-        res.status(respon.status).json(response.message);
-        return ;
-    }
+        res.status(process.env.RESPONSE_CODE_INCORRECT_FORMAT).send(process.env.RESPONSE_MESSAGE_EXCEED_LIMIT + count);
+        return;
+    }  
 
     Manufacture.find().skip(offset).limit(count).exec(function(err, manufactures){
         if(err){
@@ -74,44 +76,98 @@ const addOne = function(req, res){
 } 
 
 const deleteOne = function(req, res){
-    const manufactureId = req.query.manufactureId;
+    const manufactureId = req.params.manufactureId; 
+    
+    if(!mongoose.isValidObjectId(manufactureId)){
+        res.status(process.env.RESPONSE_CODE_INCORRECT_FORMAT).json(process.env.RESPONSE_MESSAGE_INCORRECT_INPUT); 
+        return ;
+    } 
 
-
-    Manufacture.deleteOne({  manufactureId }, function(err, deletedManufactur){
-
-        console.log("Deleted : ", deletedManufactur);
-
-        const response = {status : process.env.RESPONSE_CODE_OK, message : deletedManufactur};
+    Manufacture.findOneAndDelete(manufactureId).exec(function(err, deletedManufacture){
+        const response = {status : process.env.RESPONSE_CODE_OK, message : deletedManufacture};
         if(err){
             console.error(err);
             response.status =  process.env.RESPONSE_CODE_SERVER_ERROR;
-            response.message = { "message" : err } 
+            response.message =  err.message; 
+        }  else if(!deletedManufacture){
+            console.log();
+            response.status =  process.env.RESPONSE_CODE_NOT_FOUND;
+            response.message =  process.env.RESPONSE_MESSAGE_NOT_FOUND; 
         }
+
         res.status(response.status).json(response.message);
     });
 }
 
 const updateOne = function(req, res){
     const manufactureId = req.params.manufactureId;
-  
-    if(req.body){ 
-        Manufacture.updateOne({ manufactureId }, {$set : req.body }, function(err, updatedManufacture){
-            const response = {status : process.env.RESPONSE_CODE_OK, message : updatedManufacture};
 
+    if(!mongoose.isValidObjectId(manufactureId)){
+        res.status(process.env.RESPONSE_CODE_INCORRECT_FORMAT).json(process.env.RESPONSE_MESSAGE_INCORRECT_INPUT); 
+        return 
+    } 
+
+    if(req.body){ 
+        const filter = {_id : manufactureId };
+
+        const update = {
+            name : req.body.name,
+            establishedYear : req.body.establishedYear
+        }
+        Manufacture.findOneAndUpdate(filter, update, {upsert : true}, function(err, foundManufacture){             
+
+            const response = {status : process.env.RESPONSE_CODE_OK, message : foundManufacture};
+  
             if(err){
                 console.error(err.message);
                 response.status =  process.env.RESPONSE_CODE_SERVER_ERROR;
-                response.message = { "message" : err.message} 
+                response.message = err.message; 
             }
-            res.status(response.status).json(updatedManufacture);
+
+            res.status(response.status).json(foundManufacture);
         });   
     }  
-}
+} 
+
+const updatePartial = function(req, res){
+    const manufactureId = req.params.manufactureId;
+
+    if(!mongoose.isValidObjectId(manufactureId)){
+        res.status(process.env.RESPONSE_CODE_INCORRECT_FORMAT).json(process.env.RESPONSE_MESSAGE_INCORRECT_INPUT); 
+        return 
+    } 
+
+    if(req.body){ 
+        const filter = {_id : manufactureId };
+
+        const update ={};
+        if(req.body.name != undefined){
+            update['name'] =  req.body.name ; 
+        }
+        if(req.body.establishedYear != undefined){
+            update['establishedYear'] =  req.body.establishedYear ; 
+        } 
   
+        Manufacture.findOneAndUpdate(filter, update, {upsert : true}, function(err, foundManufacture){             
+
+            const response = {status : process.env.RESPONSE_CODE_OK, message : foundManufacture};
+  
+            if(err){
+                console.error(err.message);
+                response.status =  process.env.RESPONSE_CODE_SERVER_ERROR;
+                response.message = err.message; 
+            }
+
+            res.status(response.status).json(foundManufacture);
+        });   
+    } 
+} 
+
 module.exports = {
     getAll : getAll,
     getOne : getOne,
     addOne : addOne, 
     deleteOne : deleteOne,
-    updateOne : updateOne
+    updateOne : updateOne,
+    updatePartial: updatePartial
 }
