@@ -99,34 +99,43 @@ const deleteOne = function(req, res){
     });
 }
 
-const updateOne = function(req, res){
+const updateOne = function(req, res){ 
     const manufactureId = req.params.manufactureId;
 
     if(!mongoose.isValidObjectId(manufactureId)){
         res.status(process.env.RESPONSE_CODE_INCORRECT_FORMAT).json(process.env.RESPONSE_MESSAGE_INCORRECT_INPUT); 
-        return 
+        return;
     } 
 
-    if(req.body){ 
-        const filter = {_id : manufactureId };
-
-        const update = {
-            name : req.body.name,
-            establishedYear : req.body.establishedYear
+    Manufacture.findById(manufactureId).exec(function(err, manufacture){
+        const response = {status : process.env.RESPONSE_CODE_OK, message :"" };
+        if(err){
+            response.status = process.env.RESPONSE_CODE_SERVER_ERROR;
+            response.message = err.message;
+            
+        }else if(!manufacture){
+            response.status = process.env.RESPONSE_CODE_NOT_FOUND;
+            response.message = process.env.RESPONSE_MESSAGE_NOT_FOUND;
         }
-        Manufacture.findOneAndUpdate(filter, update, {upsert : true}, function(err, foundManufacture){             
 
-            const response = {status : process.env.RESPONSE_CODE_OK, message : foundManufacture};
-  
-            if(err){
-                console.error(err.message);
-                response.status =  process.env.RESPONSE_CODE_SERVER_ERROR;
-                response.message = err.message; 
-            }
+        if(manufacture){
+            manufacture.name = req.body.name;
+            manufacture.establishedYear = req.body.establishedYear;
+             
+            manufacture.save(function(err, updatedManufacture){
+                if(err){
+                    response.status = process.env.RESPONSE_CODE_SERVER_ERROR;
+                    response.message = err.message;
+                } 
+                //res.status(response.status).json(response.message);
+ 
+            });  
+        }
 
-            res.status(response.status).json(foundManufacture);
-        });   
-    }  
+        res.status(response.status).json(response.message);
+
+    }); 
+
 } 
 
 const updatePartial = function(req, res){
@@ -148,8 +157,7 @@ const updatePartial = function(req, res){
             update['establishedYear'] =  req.body.establishedYear ; 
         } 
   
-        Manufacture.findOneAndUpdate(filter, update, {upsert : true}, function(err, foundManufacture){             
-
+        Manufacture.findOneAndUpdate(filter, update, {upsert : true}, function(err, foundManufacture){ 
             const response = {status : process.env.RESPONSE_CODE_OK, message : foundManufacture};
   
             if(err){

@@ -7,7 +7,7 @@ mongoose.connection.on("connected", function(){
 });
 
 mongoose.connection.on("error", function(err){
-    console.log(DB_STATUS_CONNECTION_ERROR, err)
+    console.log(process.env.DB_STATUS_CONNECTION_ERROR, err)
 });
 
 process.on("SIGINT", function(){

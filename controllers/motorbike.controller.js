@@ -35,13 +35,11 @@ const getOne = function(req, res){
         if(err){
             console.message(err.message);
             response.status = process.env.RESPONSE_CODE_SERVER_ERROR;
-            response.message = err.message;
-
-            return;
+            response.message = err.message; 
         }  
         
         if(manufacture){
-            res.status(response.status).json(manufacture.motorbike.id(motorbikeId));
+            res.status(response.status).json(manufacture.motorbikes.id(motorbikeId));
         }
     });
 }
@@ -49,6 +47,10 @@ const getOne = function(req, res){
 const addOne = function(req, res){
     const manufactureId = req.params.manufactureId;
     
+    if(!mongoose.isValidObjectId(manufactureId)){
+        res.status(process.env.RESPONSE_CODE_INCORRECT_FORMAT).json(process.env.RESPONSE_MESSAGE_INCORRECT_INPUT); 
+        return 
+    } 
 
     Manufacture.findById(manufactureId).exec(function(err, manufacture){
         const response = {status : process.env.RESPONSE_CODE_OK, message : manufacture};
@@ -64,6 +66,7 @@ const addOne = function(req, res){
 
         if(manufacture){
             _addMotorbike(req, res, manufacture); 
+            return;
         }
         else{
             res.status(response.status).json(response.message);
@@ -73,7 +76,7 @@ const addOne = function(req, res){
 
 function createMotorbike(motorbike){
     newMotorbike = {
-        model_name : motorbike.model_name,
+        modelName : motorbike.modelName,
         year : motorbike.year,
         horsePower : motorbike.horsePower
     };
@@ -83,7 +86,7 @@ function createMotorbike(motorbike){
 const _addMotorbike = function(req, res, manufacture){
      
     manufacture.motorbikes.push({
-        model_name : req.body.model_name,
+        modelName : req.body.modelName,
         year : req.body.year,
         horsePower : req.body.horsePower
     }); 
@@ -133,7 +136,7 @@ const _updateMotorbike = function(req, res, manufacture){
         res.status(process.env.RESPONSE_CODE_NOT_FOUND).json(process.env.RESPONSE_MESSAGE_NOT_FOUND); 
         
     }else{
-        manufacture.motorbikes.id(motorbikeId).model_name = req.body.model_name; 
+        manufacture.motorbikes.id(motorbikeId).modelName = req.body.modelName; 
         manufacture.motorbikes.id(motorbikeId).year = req.body.year;
         manufacture.motorbikes.id(motorbikeId).horsePower = req.body.horsePower;
         manufacture.markModified(process.env.MOTORBIKE_COLLECTION); 

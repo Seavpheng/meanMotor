@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const motorbikeSchema = new mongoose.Schema({
-    model_name : {
+    modelName : {
         type : String,
         require: true
     },
