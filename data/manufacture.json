@@ -1,0 +1,79 @@
+[{
+	"_id": {
+		"$oid": "636834f66a2d94bbefeec1b7"
+	},
+	"name": "Harley-Davidson",
+	"establishedYear": 1920,
+	"motorbikes": [
+		{
+			"year": 2022,
+			"horsePower": "1815cc",
+			"_id": {
+				"$oid": "636835f56a2d94bbefeec1cc"
+			},
+			"modelName": "Sportster S"
+		},
+		{
+			"year": 2022,
+			"horsePower": "1019cc",
+			"_id": {
+				"$oid": "636836066a2d94bbefeec1d0"
+			},
+			"modelName": "Fat Boy 114"
+		}
+	],
+	"__v": 4
+},
+{
+	"_id": {
+		"$oid": "6368350b6a2d94bbefeec1b9"
+	},
+	"name": "Honda Motor Co., Ltd",
+	"establishedYear": 1959,
+	"motorbikes": [
+		{
+			"year": 2023,
+			"horsePower": "1833cc",
+			"_id": {
+				"$oid": "636835ad6a2d94bbefeec1c5"
+			},
+			"modelName": "GOLD WING TOUR AIRBAG AUTOMATIC DCT"
+		},
+		{
+			"year": 2022,
+			"horsePower": "1084cc",
+			"_id": {
+				"$oid": "636835c76a2d94bbefeec1c9"
+			},
+			"modelName": "AFRICA TWIN ADVENTURE SPORTS ES DCT"
+		}
+	],
+	"__v": 6
+},
+{
+	"_id": {
+		"$oid": "6368351b6a2d94bbefeec1bb"
+	},
+	"name": "American Kawasaki Motorcycle Corp",
+	"establishedYear": 1966,
+	"motorbikes": [
+		{
+			"year": 2023,
+			"horsePower": "399cc",
+			"_id": {
+				"$oid": "636835706a2d94bbefeec1be"
+			},
+			"modelName": "NINJA® 400"
+		},
+		{
+			"year": 2023,
+			"horsePower": "998cc",
+			"_id": {
+				"$oid": "636835856a2d94bbefeec1c2"
+			},
+			"modelName": "NINJA® ZX™-10R"
+		}
+	],
+	"__v": 4
+}]
+
