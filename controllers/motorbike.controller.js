@@ -168,7 +168,7 @@ const deleteOne = function(req, res){
 
         if(err){ 
             response.status = RESPONSE_CODE_SERVER_ERROR;
-            response.message =err.message; 
+            response.message = err.message; 
 
         }else{
             if(manufacture === null){

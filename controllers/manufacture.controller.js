@@ -99,77 +99,84 @@ const deleteOne = function(req, res){
     });
 }
 
-const updateOne = function(req, res){ 
-    const manufactureId = req.params.manufactureId;
-
-    if(!mongoose.isValidObjectId(manufactureId)){
-        res.status(process.env.RESPONSE_CODE_INCORRECT_FORMAT).json(process.env.RESPONSE_MESSAGE_INCORRECT_INPUT); 
-        return;
-    } 
-
-    Manufacture.findById(manufactureId).exec(function(err, manufacture){
-        const response = {status : process.env.RESPONSE_CODE_OK, message :"" };
+ 
+const _fullUpdate = function(req, res, manufacture){
+    manufacture.name = req.body.name;
+    manufacture.establishedYear = req.body.establishedYear;
+        
+    manufacture.save(function(err, updatedManufacture){
+        const response = {status : 204, message : updatedManufacture }
         if(err){
             response.status = process.env.RESPONSE_CODE_SERVER_ERROR;
             response.message = err.message;
-            
-        }else if(!manufacture){
-            response.status = process.env.RESPONSE_CODE_NOT_FOUND;
-            response.message = process.env.RESPONSE_MESSAGE_NOT_FOUND;
         }
+        res.status(response.status).json(response.message); 
+    });  
+}
 
-        if(manufacture){
-            manufacture.name = req.body.name;
-            manufacture.establishedYear = req.body.establishedYear;
-             
-            manufacture.save(function(err, updatedManufacture){
-                if(err){
-                    response.status = process.env.RESPONSE_CODE_SERVER_ERROR;
-                    response.message = err.message;
-                } 
-                //res.status(response.status).json(response.message);
+
+const _partialUpdate = function(req, res, manufacture){  
+    if(req.body.name != undefined){
+        manufacture.name =  req.body.name ; 
+    }
+    if(req.body.establishedYear != undefined){
+        manufacture.establishedYear =  req.body.establishedYear ; 
+    } 
+    manufacture.save(function(err, updatedManufacture){
+        const response = {status : 204, message : updatedManufacture }
+        if(err){
+            response.status = process.env.RESPONSE_CODE_SERVER_ERROR;
+            response.message = err.message;
+        }
+        res.status(response.status).json(response.message); 
+    });  
+}
  
-            });  
+
+const isValidObjectId = function(manufactureId, res){
+    if(!mongoose.isValidObjectId(manufactureId)){
+        res.status(process.env.RESPONSE_CODE_INCORRECT_FORMAT).json(process.env.RESPONSE_MESSAGE_INCORRECT_INPUT); 
+        return false;
+    } 
+    return true;
+} 
+
+const response = function (res, statusCode , message) {  
+    res.status(statusCode).json(message);
+}
+
+const checkNullError = function(res, error, manufacture){   
+    if(error){ 
+        console.log("error");
+        response(res, process.env.RESPONSE_CODE_SERVER_ERROR, error.message); 
+        return true;
+    }else if(!manufacture){ 
+        console.log("!manufacture");
+        response(res, process.env.RESPONSE_CODE_NOT_FOUND, process.env.RESPONSE_MESSAGE_NOT_FOUND);  
+        return true;
+    }    
+    return false;
+}
+
+const _updateOne = function(req, res, callBackSave){   
+    const manufactureId = req.params.manufactureId; 
+    if(isValidObjectId(manufactureId, res)){  
+        return;
+    }
+    Manufacture.findById(manufactureId).exec(function(err, manufacture){ 
+        if(!checkNullError(res, err, manufacture)) {
+            callBackSave(req, res, manufacture);  
         }
+    });  
+} 
 
-        res.status(response.status).json(response.message);
-
-    }); 
-
+const updateOne = function(req, res){   
+    _updateOne(req, res, _fullUpdate);
 } 
 
 const updatePartial = function(req, res){
-    const manufactureId = req.params.manufactureId;
-
-    if(!mongoose.isValidObjectId(manufactureId)){
-        res.status(process.env.RESPONSE_CODE_INCORRECT_FORMAT).json(process.env.RESPONSE_MESSAGE_INCORRECT_INPUT); 
-        return 
-    } 
-
-    if(req.body){ 
-        const filter = {_id : manufactureId };
-
-        const update ={};
-        if(req.body.name != undefined){
-            update['name'] =  req.body.name ; 
-        }
-        if(req.body.establishedYear != undefined){
-            update['establishedYear'] =  req.body.establishedYear ; 
-        } 
-  
-        Manufacture.findOneAndUpdate(filter, update, {upsert : true}, function(err, foundManufacture){ 
-            const response = {status : process.env.RESPONSE_CODE_OK, message : foundManufacture};
-  
-            if(err){
-                console.error(err.message);
-                response.status =  process.env.RESPONSE_CODE_SERVER_ERROR;
-                response.message = err.message; 
-            }
-
-            res.status(response.status).json(foundManufacture);
-        });   
-    } 
-} 
+    _updateOne(req, res, _partialUpdate);
+}
 
 module.exports = {
     getAll : getAll,

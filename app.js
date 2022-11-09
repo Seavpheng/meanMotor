@@ -7,10 +7,21 @@ const app = express();
 const bodyParser = require('body-parser') 
 const routes = require("./routes");
 
-app.use('/',function (req, res, next){
+app.use(function (req, res, next){
     console.log(req.method, req.url);
     next();
 });
+
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept"
+    );
+    console.log(req.method, req.url);
+    next();
+  });
+
 
 app.use(express.static(path.join(__dirname, process.env.PUBLIC_DIR)))
 app.use( express.json());
