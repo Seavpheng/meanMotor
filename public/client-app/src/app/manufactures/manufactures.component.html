@@ -1,5 +1,23 @@
-<H2>Hello</H2>
 
-<ul>
-    <li *ngFor="let manufacture of manufactures">{{manufacture.name}}</li>
+<ul *ngFor="let manufacture of manufactures">
+    <li> <a (click)="getManufacture(manufacture._id)" > {{manufacture.name}} </a></li>
+     <ul *ngFor="let motorbike of manufacture.motorbikes">
+        {{motorbike.modelName}}  {{motorbike.year}} {{motorbike.horsePower}}
+     </ul>   
 </ul>
+
+<button (click)="newManufacture()" > New Manufacture</button>
+
+ 
+
+<!-- 
+<table>
+    <tr></tr>
+    <tr>
+        <tbody>
+            <tr *ngFor="let manufacture of manufactures">
+                <
+            </tr>
+        </tbody>
+    </tr>
+</table> -->

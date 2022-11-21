@@ -1,0 +1,8 @@
+<ul>{{manufacture.name}}
+    <li *ngFor="let motorbike of manufacture.motorbikes">
+        {{motorbike.modelName}}  {{motorbike.year}} {{motorbike.horsePower}}
+    </li>
+</ul>
+
+<button (click)="deleteManufacture(manufacture._id)">Delete</button>
+<button routerLink="/manufactures">Back</button>

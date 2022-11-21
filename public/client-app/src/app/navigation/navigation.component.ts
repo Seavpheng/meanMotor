@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {Router} from '@angular/router'
+import { AuthenticationService } from '../services/authentication.service';
  
 
 
@@ -10,8 +11,10 @@ import {Router} from '@angular/router'
 })
 export class NavigationComponent implements OnInit {
 
-  constructor(private router : Router) { }
+  constructor(private router : Router, private authService : AuthenticationService) { }
 
+  isLoggedIn :boolean= this.authService.isLoggedIn;
+  
   ngOnInit(): void {
 
   }
@@ -22,6 +25,20 @@ export class NavigationComponent implements OnInit {
 
   onClickManufacture(){
     this.router.navigate(['manufactures']);
+  }
+
+  onClickNewManufacture(){
+    this.router.navigate(['manufacture/new']);
+  }
+
+
+  onRegister(){
+    this.router.navigate(['register']);
+  }
+
+
+  onLogin(){
+    this.router.navigate(['login']);
   }
 
 }

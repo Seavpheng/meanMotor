@@ -1,0 +1,15 @@
+<form [formGroup]="frmManufacture" >
+    <div class="row">
+        <div>Name</div>
+        <div><input type="text" name ="name" formControlName="name" ></div>
+    </div>
+   
+    <div class="row" >
+        <div>Established Year</div>
+        <div><input type="text" name="establishedYear" formControlName="establishedYear" ></div>
+    </div> 
+        
+    <div>
+        <button (click)="onSubmit(frmManufacture)">Add</button>  
+    </div> 
+</form> 

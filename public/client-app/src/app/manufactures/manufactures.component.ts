@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Manufacture } from '../models/manufacture';
+import { Route, Router } from '@angular/router';
+ 
+import { Manufacture } from '../models/manufacture.model';
 import { ManufactureService } from '../services/manufacture.service';
 
 @Component({
@@ -9,15 +11,21 @@ import { ManufactureService } from '../services/manufacture.service';
 })
 export class ManufacturesComponent implements OnInit {
 
-   constructor(private manufactureService : ManufactureService) { }
+   constructor(private manufactureService : ManufactureService, private router: Router) { }
  
   manufactures! : Manufacture[] ;
   ngOnInit(): void {
     this.manufactureService.getManufactures().subscribe(data => {
-      this.manufactures = data;
-
-      console.log(data);
+      this.manufactures = data; 
     });
+  }
+
+  getManufacture(manufactureId :string){
+    this.router.navigateByUrl(`/manufacture/${manufactureId}`);
+  }
+
+  newManufacture(){
+    this.router.navigateByUrl(`/manufacture-create`);
   }
 
 }

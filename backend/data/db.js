@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 require('./manufacture.model');
-mongoose.connect(process.env.DB_URL,  {useNewUrlParser: true, useUnifiedTopology: true});
+require('./user.model');
+
+// mongoose.connect(process.env.DB_URL,  {useNewUrlParser: true, useUnifiedTopology: true});
+
+mongoose.connect(process.env.DB_URL);
 
 mongoose.connection.on("connected", function(){
     console.log(  mongoose.connection.name + process.env.DB_STATUS_CONNECTED );

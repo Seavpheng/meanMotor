@@ -1,14 +1,10 @@
 const express = require("express");
-const manufactureController = require("../controllers/manufacture.controller");
-const motorbikeController = require("../controllers/motorbike.controller");
+const manufactureController = require("../backend/controllers/manufacture.controller");
+const motorbikeController = require("../backend/controllers/motorbike.controller");
+const userController = require("../backend/controllers/user.controller");
 
 const router = express.Router();
-
-// router.route("/").get(function(req, res){
-//     res.status(process.env.RESPONSE_CODE_OK);
-// });
-
-
+ 
 router.route("/manufactures")
     .get(manufactureController.getAll)
     .post(manufactureController.addOne);
@@ -27,6 +23,10 @@ router.route("/manufactures/:manufactureId/motorbikes/:motorbikeId")
     .get(motorbikeController.getOne)
     .put(motorbikeController.updateOne)
     .delete(motorbikeController.deleteOne);
+
+
+router.route("/users/register").post(userController.register);
+router.route("/users/login").post(userController.login);
 
 
  
