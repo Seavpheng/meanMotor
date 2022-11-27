@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Manufacture } from '../models/manufacture.model';
+import { Motorbike } from '../models/motorbike.model';
+import { AuthenticationService } from '../services/authentication.service';
 import { ManufactureService } from '../services/manufacture.service';
+import { MotorbikeService } from '../services/motorbike.service';
 
 @Component({
   selector: 'app-manufacture',
@@ -11,7 +14,14 @@ import { ManufactureService } from '../services/manufacture.service';
 export class ManufactureComponent implements OnInit {
 
   manufacture : Manufacture = new Manufacture();
-  constructor(private route : ActivatedRoute, private router :Router,  private manufactureService: ManufactureService) { }
+
+  selectedMotorbike : Motorbike = new Motorbike();
+
+  get isLoggedIn(): boolean {
+    return this._authService.isLoggedIn;
+  }
+
+  constructor(private route : ActivatedRoute, private router :Router,  private manufactureService: ManufactureService, private motorbikeService : MotorbikeService, private _authService : AuthenticationService) { }
 
   ngOnInit(): void {
     this.getManufacture();
@@ -27,14 +37,30 @@ export class ManufactureComponent implements OnInit {
     });  
   }
 
-  deleteManufacture(manufactureId :string){
-    this.manufactureService.delete(manufactureId).subscribe({
-      next: ()=>{ },
-      error : ()=>{},
-      complete:()=>{
-        this.router.navigate(['manufactures']);
-      }
-    });
+  editManufacture(manufactureId :string){
+    this.router.navigateByUrl(`manufacture/edit/${manufactureId}`);
+  }
+ 
+
+  deleteMotorbike(manufactureId :string, motorbikeId : string){
+    this.motorbikeService.delete(manufactureId, motorbikeId).subscribe({
+      next : result =>{
+        
+      },
+      error: err=>{},
+      complete: ()=>{
+        this.getManufacture();
+      } 
+    })
+  }
+
+  setAddMotorBike($event: Manufacture){
+    this.manufacture = $event;
+  } 
+
+  selectMotorbike(motorbike : Motorbike){  
+    console.log(motorbike);
+    this.selectedMotorbike = motorbike;
   }
 
 }

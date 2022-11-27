@@ -1,8 +1,22 @@
-<ul>{{manufacture.name}}
-    <li *ngFor="let motorbike of manufacture.motorbikes">
-        {{motorbike.modelName}}  {{motorbike.year}} {{motorbike.horsePower}}
-    </li>
-</ul>
 
-<button (click)="deleteManufacture(manufacture._id)">Delete</button>
-<button routerLink="/manufactures">Back</button>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-9">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">{{manufacture.name}} <!--<button *ngIf="isLoggedIn" (click)="editManufacture(manufacture._id)"> Edit </button>--></h5> 
+              <ng-container *ngFor="let motorbike of manufacture.motorbikes">
+              <p class="card-text">{{motorbike.modelName}}  {{motorbike.year}} ({{motorbike.horsePower}})
+
+                <button *ngIf="isLoggedIn" (click)="selectMotorbike(motorbike)" class="btn btn-sm  btn-outline-primary">Edit</button> <button *ngIf="isLoggedIn" (click)="deleteMotorbike(manufacture._id, motorbike._id)" class="btn btn-sm  btn-outline-danger"> Remove</button></p>
+              </ng-container> 
+            </div> 
+          </div>
+          <a routerLink="/manufactures" class="btn btn-sm btn-primary">Back</a>
+        </div>
+        <div class="col-sm-3">
+            <app-motorbike-editor *ngIf="isLoggedIn" [manufacture]="manufacture" [selectedMotorbike]="selectedMotorbike" (addEvent)="setAddMotorBike($event)" ></app-motorbike-editor>
+        </div>
+      </div>
+    
+</div>

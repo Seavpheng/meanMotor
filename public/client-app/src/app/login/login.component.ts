@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { Router } from '@angular/router';
 import { User, UserLogin } from '../models/user.model';
 import { AuthenticationService } from '../services/authentication.service';
 import { UserService } from '../services/user.service';
@@ -12,32 +13,42 @@ import { UserService } from '../services/user.service';
 export class LoginComponent implements OnInit {
 
   name! :string ;
-  isLoggedIn : boolean= false;
+  isLoggedIn : boolean= this.authService.isLoggedIn;
   userLogin: UserLogin = new UserLogin(); 
   user! : User;
-  constructor(private userService :UserService, private authService : AuthenticationService) { }
+
+  constructor(private router : Router, private userService :UserService, private authService : AuthenticationService) { }
 
   ngOnInit(): void {
-     
+    this.isLoggedIn = this.authService.isLoggedIn;
   }
 
-  login(frmLogin: NgForm){ 
-    
+  login(frmLogin: NgForm){  
     this.userLogin.fillFromNgForm(frmLogin);
     this.userService.login(this.userLogin).subscribe({
-      next : (result )=>{
-        this.isLoggedIn = true;
-        this.authService.token = this.authService.token; 
-        console.log("result htis");
+      next : (result )=>{ 
+        this.authService.token = result.token; 
+        this.isLoggedIn = this.authService.isLoggedIn;
+        console.log(this.isLoggedIn);
+
+        this.router.navigate(['/']);
       }, 
       error : (error)=>{
         console.log(error);
+      },
+      complete:()=>{
+        this.ngOnInit();
       }
     })
   }
 
+  removeToken(){
+    localStorage.removeItem("token");
+    this.router.navigate(['login']); 
+  } 
+  
   logout(){
-    this.isLoggedIn= false; 
+    this.isLoggedIn = this.authService.isLoggedIn
     this.name ="";
     this.user.reset();
   }

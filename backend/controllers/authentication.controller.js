@@ -9,18 +9,17 @@ const _sendResponse = function(res, response){
 const authenticated = function(req,res, next){
     const response ={
         status : 403,
-        message : {message : "no toke provice"}
+        message : {message : "no toke provide"}
     };
 
     const headerExists = req.headers.authorization;
-    console.log("headerExist", headerExists);
-
+ 
     if(headerExists){
-        const token = req.header.authorization.split(" ")[1];
-
+        const token = req.headers.authorization.split(' ')[1];
+        
+        
         const jwtVerifyPromise = util.promisify(jwt.verify, {context :jwt});
 
- 
         jwtVerifyPromise(token, process.env.JWT_PASSWORD)
             .then(()=>next())
             .catch(()=>{
@@ -29,8 +28,7 @@ const authenticated = function(req,res, next){
             }); 
     }
     else{
-
-        _sendResponse(res, response);
+         _sendResponse(res, response);
     }
 }
  

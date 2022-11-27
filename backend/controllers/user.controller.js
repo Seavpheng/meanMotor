@@ -3,14 +3,20 @@ const User = mongoose.model(process.env.USER_MODEL);
 const bcrypt = require('bcrypt');
 const Jwt = require("jsonwebtoken");
 
+const responseHandler = require("../utilities/responseHandler");
+
 const addUser = function (req, res) {
     let password = req.body.password;  
-    const response = _createDefaultResponse(); 
+    const response = responseHandler.createDefaultResponse(); 
     bcrypt.genSalt(10)
         .then(salt => _generateHash(password, salt))
         .then(hash => _createUser(req, hash, response))
+        .then(user => _sendToken(user, response))
         .catch(error => _handleError(error, response))
-        .finally(()=> _sendResponse(res, response)); 
+        .finally(()=>{
+            debugLog("error", response);
+            responseHandler.sendResponse(res, response)
+        } ); 
 } 
 
 _generateHash = function(password, salt){
@@ -43,7 +49,8 @@ _createUser =function(req, hash, response){
             resolve(user);
         })
         .catch((error) => {  
-            response.status = parseInt(process.env.RESPONSE_CODE_SERVER_ERROR); 
+            response.status = parseInt(process.env.RESPONSE_CODE_SERVER_ERROR);
+            response.message = error.message; 
             reject(error);
         }); 
     }); 
@@ -52,18 +59,14 @@ _createUser =function(req, hash, response){
 const login = function (req, res) {  
     console.log(req.body)
 
-    const response = _createDefaultResponse();  
-    
-    // User.findOne({username:req.body.username}).exec(function(err, user){
-    //     tuser = user;
-    // });
+    const response = responseHandler.createDefaultResponse();// _createDefaultResponse();   
 
     User.findOne({ username: req.body.username })
         .then(user => _checkUserExist(user, response))
         .then(user => _checkPasswordMatch(req.body.password, user, response))
         .then(user => _sendToken(user, response))
         .catch(error => {console.log(error);_handleError(error, response)})
-        .finally(() => _sendResponse(res, response)); 
+        .finally(() => responseHandler.sendResponse(res, response)); 
 } 
 
 _checkUserExist = function (user, response) { 
@@ -95,21 +98,13 @@ _checkPasswordMatch = function (password, user, response) {
 }
 
 _sendToken = function (user, response) {
-    const token = Jwt.sign({ username: user.name }, process.env.JWT_PASSWORD, { expiresIn: 3600 });
+    const token = Jwt.sign({ username: user.username }, process.env.JWT_PASSWORD, { expiresIn: 3600 });
     response.token = token;
 }
 
 _handleError = function (error, response) {
     //response.status = parseInt(process.env.RESPONSE_CODE_SERVER_ERROR);
     //response.message = error.message;
-}
-
-_sendResponse = function (res, response) {  
-    res.status(parseInt(response.status)).json(response);
-} 
-
-_createDefaultResponse = function (status, message) {
-    return response = { status: 200, message: {} };
 }
 
 module.exports = {

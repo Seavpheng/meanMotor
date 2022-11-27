@@ -1,23 +1,39 @@
 
-<ul *ngFor="let manufacture of manufactures">
-    <li> <a (click)="getManufacture(manufacture._id)" > {{manufacture.name}} </a></li>
-     <ul *ngFor="let motorbike of manufacture.motorbikes">
-        {{motorbike.modelName}}  {{motorbike.year}} {{motorbike.horsePower}}
-     </ul>   
-</ul>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-9">
+            <input type="text"  [(ngModel)]="search"><button (click)="onSearch()" class="btn btn-sm btn-primary">Search</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-9">
+            <ng-container *ngFor="let manufacture of manufactures">
+                <div class="card" >
+                    <div class="card-body">
+                    <h5 class="card-title"><a (click)="getManufacture(manufacture._id)"  > {{manufacture.name}} </a> </h5>
+                    <p class="card-text">{{manufacture.shortDescription}}</p>
+                    <ng-container *ngIf="isLoggedIn">
+                        <a (click)="getManufacture(manufacture._id)" class="btn btn-sm btn-outline-primary">View</a>
+                        <a (click)="selectManufacture(manufacture)" class="btn btn-sm  btn-outline-primary">Edit</a> 
+                        <a (click)="deleteManufacture(manufacture._id)" class="btn btn-sm  btn-outline-danger">Remove</a>
+                    </ng-container>
+                    </div>
+                </div> 
+            </ng-container>
+        </div>
+        <div class="col-sm-3">
+            <app-manufacture-editor *ngIf="isLoggedIn" [selectedManufacture]="selectedManufacture" (addEvent)="setAddMotorBike()"></app-manufacture-editor>
+        </div>
+        </div>
+    <div class="row">
+        <div class="col-sm-9">
+            <ng-container *ngIf="(numPages!==undefined && numPages > 1) "> 
+                <button (click)="onPrevious()" [disabled]="currentPage === 0" class="btn btn-primary">Pre</button>
+                <button (click)="onNext()" [disabled]="currentPage === numPages -1" class="btn btn-primary">Next</button>
+            </ng-container>
+        </div>
+    </div> 
+    
+</div>
+  
 
-<button (click)="newManufacture()" > New Manufacture</button>
-
- 
-
-<!-- 
-<table>
-    <tr></tr>
-    <tr>
-        <tbody>
-            <tr *ngFor="let manufacture of manufactures">
-                <
-            </tr>
-        </tbody>
-    </tr>
-</table> -->

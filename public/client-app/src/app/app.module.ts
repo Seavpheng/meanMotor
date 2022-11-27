@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import {HttpClientModule} from '@angular/common/http';
+import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
 import {RouterModule} from '@angular/router';
 import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
 
@@ -15,6 +15,11 @@ import { FormsModule , ReactiveFormsModule} from '@angular/forms';
 import { LoginComponent } from './login/login.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ManufactureComponent } from './manufacture/manufacture.component';
+import { MotorbikeEditorComponent } from './motorbike-editor/motorbike-editor.component';
+import { environment } from './../environments/environment'; 
+import { AppInterceptor } from './app.interceptor';
+import { AuthenticationService } from './services/authentication.service';
+ 
 
 @NgModule({
   declarations: [
@@ -24,7 +29,10 @@ import { ManufactureComponent } from './manufacture/manufacture.component';
     HomeComponent,
     ManufacturesComponent,
     RegisterComponent, 
-    ManufactureEditorComponent, LoginComponent, ProfileComponent, ManufactureComponent
+    ManufactureEditorComponent, LoginComponent, ProfileComponent, ManufactureComponent, MotorbikeEditorComponent,
+  
+ 
+
   ],
   imports: [
     HttpClientModule,
@@ -33,19 +41,26 @@ import { ManufactureComponent } from './manufacture/manufacture.component';
     ReactiveFormsModule,
     RouterModule.forRoot([
       {path :"", component: HomeComponent},
-      {path : "manufactures", component: ManufacturesComponent},
-      {path : "manufacture-create" , component : ManufactureEditorComponent},
-      {path : "manufacture/:manufactureId", component: ManufactureComponent},
-      {path : "register", component: RegisterComponent},
-      {path : "profile", component: RegisterComponent},
-      {path : "login", component: LoginComponent},
+      {path : environment.listManufacture, component: ManufacturesComponent},
+      {path : environment.createManufacture , component : ManufactureEditorComponent},
+      {path : environment.editManufacture , component : ManufactureEditorComponent},
+      {path : environment.getManufacture, component: ManufactureComponent},
+      {path : environment.userRegister, component: RegisterComponent},
+      {path : environment.userProfile, component: ProfileComponent},
+      {path : environment.userLogin, component: LoginComponent},
     
 
     ])
   ],
   providers: [
-    {provide : JWT_OPTIONS, useValue : JWT_OPTIONS}, 
+    AuthenticationService,
+    { provide: HTTP_INTERCEPTORS, useClass: AppInterceptor, multi: true },
+    {
+      provide :  JWT_OPTIONS, 
+      useValue : JWT_OPTIONS
+    }, 
     JwtHelperService,
+
  
   ],
   bootstrap: [AppComponent]

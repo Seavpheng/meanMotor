@@ -5,7 +5,9 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node app.js"
+    "startBackend":"nodemon --inspect",
+    "startFrontend": "cd public/client-app && npm start",
+    "start": "npm run startBackend | npm run startFrontend"
   },
   "author": "SEAVPHENG LAO",
   "license": "ISC",

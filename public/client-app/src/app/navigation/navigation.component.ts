@@ -10,13 +10,19 @@ import { AuthenticationService } from '../services/authentication.service';
   styleUrls: ['./navigation.component.css']
 })
 export class NavigationComponent implements OnInit {
+ 
+  get isLoggedIn() :boolean{
+    return this.authService.isLoggedIn;
+  }
+
+  get username () :string{
+    return this.authService.name;
+  }
 
   constructor(private router : Router, private authService : AuthenticationService) { }
-
-  isLoggedIn :boolean= this.authService.isLoggedIn;
   
   ngOnInit(): void {
-
+     
   }
 
   onClickHome(){
@@ -29,16 +35,19 @@ export class NavigationComponent implements OnInit {
 
   onClickNewManufacture(){
     this.router.navigate(['manufacture/new']);
-  }
-
+  } 
 
   onRegister(){
     this.router.navigate(['register']);
-  }
-
+  } 
 
   onLogin(){
     this.router.navigate(['login']);
   }
 
+  onLogout(){   
+    console.log("On navigation" , this.isLoggedIn);
+    localStorage.removeItem("token");
+    this.router.navigateByUrl('/login');
+  }
 }

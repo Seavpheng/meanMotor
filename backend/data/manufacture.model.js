@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const motorbikeSchema = new mongoose.Schema({
     modelName : {
         type : String,
-        require: true
+        required: true
     },
     year : {
         type : Number,
@@ -17,6 +17,7 @@ const manufactureSchema = new mongoose.Schema({
         type : String,
         required : [true, 'Manufacture name is required']
     },
+    shortDescription: String,
     establishedYear : {
         type : Number,
         min : 1900

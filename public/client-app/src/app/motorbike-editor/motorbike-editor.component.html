@@ -1,0 +1,23 @@
+<div class="container-fluid" >
+    <form [formGroup]="frmMotorbike" >
+        <div class="form-group  ">
+            <label for="modelName" class="form-check-label">Model Name</label>
+            <input type="text" class="form-control" name ="modelName" formControlName="modelName" > 
+            <input type="hidden" class="form-control" name ="_id" formControlName="_id" > 
+        </div> 
+        <div class="form-group" >
+            <label for="year" class="form-check-label">Year</label>
+            <input type="text" class="form-control" name="year" formControlName="year" >
+        </div>
+        <div class="form-group" >
+            <label for="horsePower" class="form-check-label">Horse Power</label>
+            <input type="text" class="form-control" name="horsePower" formControlName="horsePower" >
+        </div> 
+
+        <div *ngIf="hasError" class="form-group col-sm-4">{{errorMessage}}</div> 
+        <div>
+            <button (click)="onSubmit(frmMotorbike)" class="btn-sm  btn-outline-primary">{{isEdit ? "Update" : "Add" }}</button>  
+            <button (click)="onReset()" class="btn-sm  btn-outline-warning">Reset</button>  
+        </div> 
+    </form> 
+</div>

@@ -1,12 +1,18 @@
 const mongoose = require("mongoose");
 const userSchema = mongoose.Schema({
-    fullname :String,
+    fullname :{
+        type : String,
+        required : [true, 'Full Name is required']
+    },
     username :{
         type : String,
-        require : true,
+        required : [true, 'Username is required'],
         unique : true
     },
-    password :String
+    password :{
+        type : String,
+        required : [true, 'Full Name is required']
+    }
 })
 
 mongoose.model(process.env.USER_MODEL, userSchema, process.env.USER_COLLECTION)
